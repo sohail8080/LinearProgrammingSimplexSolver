@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0035)http://hgourvest.github.io/glpk.js/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Glpk.js : GNU Linear Programming Kit for Javascript">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheet.css">
+    <title>Glpk.js</title>
+  </head>
+  
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/hgourvest/glpk.js">View on GitHub</a>
+
+          <h2 id="project_tagline">Glpk.js - GNU Linear Programming Kit for Javascript</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/hgourvest/glpk.js/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/hgourvest/glpk.js/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    
+    <div id="main_content_wrap" class="outer">
+    <h3>Solve a CPLEX problem online</h3>
+	
+<textarea id="source" cols="100" rows="15">\* Problem: todd *\
+
+Maximize
+obj: + 786433 x1 + 655361 x2 + 589825 x3 + 557057 x4
++ 540673 x5 + 532481 x6 + 528385 x7 + 526337 x8 + 525313 x9
++ 524801 x10 + 524545 x11 + 524417 x12 + 524353 x13
++ 524321 x14 + 524305 x15
+
+Subject To
+cap: + 786433 x1 + 655361 x2 + 589825 x3 + 557057 x4
++ 540673 x5 + 532481 x6 + 528385 x7 + 526337 x8 + 525313 x9
++ 524801 x10 + 524545 x11 + 524417 x12 + 524353 x13
++ 524321 x14 + 524305 x15 &lt;= 4194303.5
+
+Bounds
+0 &lt;= x1 &lt;= 1
+0 &lt;= x2 &lt;= 1
+0 &lt;= x3 &lt;= 1
+0 &lt;= x4 &lt;= 1
+0 &lt;= x5 &lt;= 1
+0 &lt;= x6 &lt;= 1
+0 &lt;= x7 &lt;= 1
+0 &lt;= x8 &lt;= 1
+0 &lt;= x9 &lt;= 1
+0 &lt;= x10 &lt;= 1
+0 &lt;= x11 &lt;= 1
+0 &lt;= x12 &lt;= 1
+0 &lt;= x13 &lt;= 1
+0 &lt;= x14 &lt;= 1
+0 &lt;= x15 &lt;= 1
+
+Generals
+x1
+x2
+x3
+x4
+x5
+x6
+x7
+x8
+x9
+x10
+x11
+x12
+x13
+x14
+x15
+
+End
+
+</textarea><br>
+    <input type="submit" id="go" value=" run " onclick="run()">
+    <input type="checkbox" id="mip" checked="">MIP<br>
+    <textarea id="log" cols="100" rows="15"></textarea>
+    <script>
+
+        var logNode = document.getElementById("log");
+        var mip = document.getElementById("mip");
+        var src = document.getElementById("source");
+        var go = document.getElementById("go");
+        var job;
+
+        function log(value){
+            logNode.appendChild(document.createTextNode(value + "\n"));
+            logNode.scrollTop = logNode.scrollHeight;
+        }
+
+        if (navigator.appName == "Microsoft Internet Explorer"){
+            go.disabled = true;
+            log("Internet explorer is not supported")
+        }
+
+        function run(){
+            job = new Worker("javascripts/main.js");
+            job.onmessage = function (e) {
+                var obj = e.data;
+                switch (obj.action){
+                    case 'log':
+                        log(obj.message);
+                        break;
+                    case 'done':
+                        stop();
+                        log(JSON.stringify(obj.result));
+                        break;
+                }
+            };
+
+            logNode.innerHTML = "";
+            go.value = 'stop';
+            go.onclick = stop;
+            job.postMessage({action: 'load', data: src.value, mip: mip.checked});
+        }
+
+        function stop(){
+            job.terminate();
+            job = null;
+            go.value = ' run ';
+            go.onclick = run;
+        }
+    </script>
+
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Glpk.js maintained by <a href="https://github.com/hgourvest">hgourvest</a></p>
+        <p>Published with <a href="http://pages.github.com/">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  
+
+</body></html>
